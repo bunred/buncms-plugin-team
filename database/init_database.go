@@ -1,7 +1,8 @@
 package database
 
 import (
-	"buncms-plugin-team/types"
+	"github.com/bunred/buncms-plugin-team/types"
+	"github.com/bunred/buncms-plugin-team/utils"
 	buncmstypes "github.com/bunred/buncms/types"
 	buncmsutils "github.com/bunred/buncms/utils"
 	"github.com/go-pg/pg/v9"
@@ -11,9 +12,7 @@ import (
 func initDatabase(db *pg.DB) error {
 
 	// Create table
-	model := []interface{}{
-		(*types.ModelTeams)(nil),
-	}
+	model := &types.ModelTeams{}
 
 	err := db.CreateTable(model, &orm.CreateTableOptions{
 		IfNotExists: true,
@@ -26,8 +25,8 @@ func initDatabase(db *pg.DB) error {
 	// plugin-user settings data
 	teamSettings := []buncmstypes.ModelSettings{
 		{
-			Name:  "team-db-version",
-			Value: "1.00",
+			Name:  utils.PluginSettingName,
+			Value: "1.00", // default version
 		},
 	}
 
@@ -38,7 +37,7 @@ func initDatabase(db *pg.DB) error {
 	}
 
 	// Update db-version
-	err = buncmsutils.UpdateSetting(db, "team-db-version", "1.00")
+	err = buncmsutils.UpdateSetting(db, utils.PluginSettingName, utils.PluginSettingVersion)
 
 	if err != nil {
 		return err
