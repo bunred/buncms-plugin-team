@@ -11,18 +11,7 @@ import (
 
 func initDatabase(db *pg.DB) error {
 
-	// Create table
-	model := &types.ModelTeams{}
-
-	err := db.CreateTable(model, &orm.CreateTableOptions{
-		IfNotExists: true,
-	})
-
-	if err != nil {
-		return err
-	}
-
-	// plugin-user settings data
+	// Default settings data (plugin team)
 	teamSettings := []buncmstypes.ModelSettings{
 		{
 			Name:  utils.PluginSettingName,
@@ -31,10 +20,37 @@ func initDatabase(db *pg.DB) error {
 	}
 
 	// Init buncms_settings table/data
-	err = buncmsutils.InitBuncms(db, teamSettings)
+	err := buncmsutils.InitBuncms(db, teamSettings)
 	if err != nil {
 		return err
 	}
+
+	// START Create table (teams)
+
+	model := &types.ModelTeams{}
+
+	err = db.CreateTable(model, &orm.CreateTableOptions{
+		IfNotExists: true,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	// END (teams)
+
+	// START Create table (rel_team_user)
+	relTeamModel := &types.ModelRelTeamUser{}
+
+	err = db.CreateTable(relTeamModel, &orm.CreateTableOptions{
+		IfNotExists: true,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	// END (rel_team_user)
 
 	// Update db-version
 	err = buncmsutils.UpdateSetting(db, utils.PluginSettingName, utils.PluginSettingVersion)

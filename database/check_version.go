@@ -6,7 +6,6 @@ import (
 	"github.com/bunred/buncms/types"
 	buncmsutils "github.com/bunred/buncms/utils"
 	"github.com/go-pg/pg/v9"
-	"os"
 )
 
 func CheckVersion(db *pg.DB) error {
@@ -28,7 +27,7 @@ func CheckVersion(db *pg.DB) error {
 		}
 	}
 
-	fmt.Printf("Plugin: %s-%s is LessThan %s, start megring data...\n", os.Getenv("TEAM_SETTING_NAME"), dbVersion.Value, targetVersion)
+	fmt.Printf("Plugin: %s-%s is LessThan %s, start megring data...\n", utils.PluginSettingName, dbVersion.Value, targetVersion)
 	err := initDatabase(db)
 	if err != nil {
 		return err
